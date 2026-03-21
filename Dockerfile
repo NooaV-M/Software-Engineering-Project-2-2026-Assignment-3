@@ -9,4 +9,4 @@ COPY . /app
 
 RUN mvn package
 
-CMD ["java","-jar", "target/omistaja-0.0.1-SNAPSHOT.jar"]
+CMD ["java","-jar", "target/Software-Engineering-Project-2-2026-Assignment-1-1.0-SNAPSHOT.jar"]
