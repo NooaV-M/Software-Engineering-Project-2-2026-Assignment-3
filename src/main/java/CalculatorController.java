@@ -1,3 +1,4 @@
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,19 +12,30 @@ public class CalculatorController {
 
     public HBox langButtonBox;
     public Label lblResult;
+    public Label lblPrice;
+    public Label lblQuantity;
+    public Button btnCalc;
+    public Button btnAdd;
+    public Label lblResultNum;
+    public TextField textFieldQuantity;
+    public TextField textFieldPrice;
     private Locale currentLocale = new Locale("en","UK");
     private Map<String, String> localizedStrings;
+
+    Calculator calculator = new Calculator();
 
     @FXML
     public void initialize() {
         setLanguage(currentLocale);
 
         Button engButton = createLanguageButton("English", new Locale("en", "UK"));
-        Button friButton = createLanguageButton("French", new Locale("fr", "FR"));
+        Button sweButton = createLanguageButton("Swedish", new Locale("sv", "SE"));
         Button jpaButton = createLanguageButton("日本語", new Locale("ja", "JP"));
-        Button farButton = createLanguageButton("فارسی", new Locale("fa", "IR"));
+        Button araButton = createLanguageButton("العربية", new Locale("ar", "SA"));
 
-        langButtonBox.getChildren().addAll(engButton, friButton, jpaButton, farButton);
+        langButtonBox.getChildren().addAll(engButton, sweButton, jpaButton, araButton);
+
+        lblResultNum.setText("");
     }
 
     private Button createLanguageButton(String text, Locale locale) {
@@ -33,7 +45,6 @@ public class CalculatorController {
         return button;
     }
 
-
     private void setLanguage(Locale locale) {
         currentLocale = locale;
         lblResult.setText(""); // Clear previous result
@@ -42,15 +53,26 @@ public class CalculatorController {
         localizedStrings = LocalizationService.getLocalizedStrings(locale);
 
         // Update all UI text
-        lblTitle.setText(localizedStrings.getOrDefault("title", "Average Calculator"));
-        lblDistant.setText(localizedStrings.getOrDefault("distance", "Distant (km):"));
-        lblTime.setText(localizedStrings.getOrDefault("time", "Time (h):"));
-        btnCalculate.setText(localizedStrings.getOrDefault("calculate", "Calculate Average Speed"));
-
-        // Update time display with new locale
-        displayLocalTime(locale);
+        lblQuantity.setText(localizedStrings.getOrDefault("itemNumberPrompt", "Enter the number of items to purchase:"));
+        lblPrice.setText(localizedStrings.getOrDefault("itemPricePrompt", "Enter the price for item:"));
+        lblResult.setText(localizedStrings.getOrDefault("totalCostMessage", "Total cost:"));
+        btnAdd.setText(localizedStrings.getOrDefault("addItemPrompt", "Calculate Average Speed"));
+        btnCalc.setText(localizedStrings.getOrDefault("calcItemPrompt", "Calculate Total"));
 
         // Apply text direction based on language
-        applyTextDirection(locale);
+//        applyTextDirection(locale);
+    }
+
+    public void calculateTotal(ActionEvent actionEvent) {
+        lblResultNum.setText(Double.toString(calculator.getTotal()));
+        System.out.println("Total cost: " + calculator.getTotal());
+    }
+
+    public void addToTotal(ActionEvent actionEvent) {
+        calculator.getCurrentItemPrice(textFieldPrice.getText());
+        calculator.getCurrentItemQuantity(textFieldQuantity.getText());
+
+        textFieldPrice.setText("");
+        textFieldQuantity.setText("");
     }
 }
